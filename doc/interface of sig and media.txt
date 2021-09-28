@@ -1,0 +1,46 @@
+1、EVENT_ID_SIGATEWAY The event id of sig gateway send to media gateway
+
+通过增加EVENT_HEADER_ROUTING字段，指定要发给哪个媒体网关
+agc_event_add_header(new_event, EVENT_HEADER_ROUTING, "media2.sig_cmd"
+
+2、EVENT_ID_MEDIAGATEWAY The event id of media gateway send to sig gateway
+
+通过增加EVENT_HEADER_ROUTING字段，指定要发给哪个媒体网关
+agc_event_add_header(new_event, EVENT_HEADER_ROUTING, "sig1.media_cmd"
+
+
+3、信令网关配置接收媒体网关事件
+增加一个mq consumer配置，参考conf/default/mq_profiles/mq_consumer_default.yml
+命名为consumer_mediaevent.yml
+binding_key配置为自己的主机名加媒体网关事件名，如：
+binding_key: "5gsig.media_cmd"
+
+信令和媒体网关通道独立定义一个exchange
+exname: "TAP.SigMedias"
+
+4、信令网关配置发布信令网关事件
+增加一个mq producer配置，参考conf/default/mq_profiles/mq_producer_default.yml
+命名为producer_sigevent.yml
+信令和媒体网关通道独立定义一个exchange
+exname: "TAP.SigMedias"
+
+发布的事件名称为
+event_filter: "sig_cmd"
+
+5、媒体网关配置接收媒体事件
+增加一个mq consumer配置，参考conf/default/mq_profiles/mq_consumer_default.yml
+命名为consumer_sigevent.yml
+binding_key配置为自己的主机名加媒体网关事件名，如：
+binding_key: "5gmedia.sig_cmd"
+
+信令和媒体网关通道独立定义一个exchange
+exname: "TAP.SigMedias"
+
+6、媒体网关配置发布媒体网关事件
+增加一个mq producer配置，参考conf/default/mq_profiles/mq_producer_default.yml
+命名为producer_mediaevent.yml
+信令和媒体网关通道独立定义一个exchange
+exname: "TAP.SigMedias"
+
+发布的事件名称为
+event_filter: "media_cmd"
